@@ -63,7 +63,11 @@ exports.utility.signURL = function (url) {
             throw Error(constants_1.SIGN_URL_ERROR);
         }
         // Temporarily removed verification token because it is not required for some URLs.
-        return url + "&_signature=" + body.signature + "&verifyFp=" + body.verifyFp;
+        return (url +
+            "&_signature=" +
+            body.data.signature +
+            "&verifyFp=" +
+            body.data.verify_fp);
     });
 };
 function post(urlStr, body) {
@@ -78,6 +82,8 @@ function post(urlStr, body) {
         return new Promise((resolve, reject) => {
             const req = http.request(requestArgs, (res) => handleResponse(res, resolve, reject));
             req.on("error", reject);
+            // fake a user agent here
+            req.setHeader("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (Windows NT 10.0; Win64; x64) Chrome/90.0.4430.85 Safari/537.36");
             req.write(body);
             req.end();
         });

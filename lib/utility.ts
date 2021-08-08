@@ -54,7 +54,13 @@ utility.signURL = async function (url: string): Promise<string> {
   }
 
   // Temporarily removed verification token because it is not required for some URLs.
-  return url + "&_signature=" + body.signature + "&verifyFp=" + body.verifyFp;
+  return (
+    url +
+    "&_signature=" +
+    body.data.signature +
+    "&verifyFp=" +
+    body.data.verify_fp
+  );
 };
 
 async function post(urlStr: string, body: string): Promise<SignatureResponse> {
@@ -73,7 +79,11 @@ async function post(urlStr: string, body: string): Promise<SignatureResponse> {
     );
 
     req.on("error", reject);
-
+    // fake a user agent here
+    req.setHeader(
+      "User-Agent",
+      "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (Windows NT 10.0; Win64; x64) Chrome/90.0.4430.85 Safari/537.36"
+    );
     req.write(body);
 
     req.end();
