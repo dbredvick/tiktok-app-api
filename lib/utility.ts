@@ -41,7 +41,7 @@ utility.signURL = async function(url: string): Promise<string> {
 
     let body;
     try {
-        body = await post(signatureService, { url: url });
+        body = await post(signatureService,  url);
     } catch (err) {
         throw Error(SIGN_URL_ERROR);
     }
@@ -50,7 +50,7 @@ utility.signURL = async function(url: string): Promise<string> {
     return url + '&_signature=' + body.signature + '&verifyFp=' + body.verifyFp;
 }
 
-async function post(urlStr: string, body: object): Promise<SignatureResponse> {
+async function post(urlStr: string, body: string): Promise<SignatureResponse> {
     const url = new URL(urlStr);
 
     const requestArgs = {
