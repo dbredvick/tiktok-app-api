@@ -33,16 +33,16 @@ const deflate = util.promisify(zlib.deflate);
 const brotli = util.promisify(zlib.brotliDecompress);
 const getTemplate = {
     headers: {
-        'method': 'GET',
-        'accept-encoding': 'gzip, deflate, br',
-        'referer': 'https://www.tiktok.com/trending?lang=en',
-        'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/83.0.4103.97 Safari/537.36'
-    }
+        method: "GET",
+        "accept-encoding": "gzip, deflate, br",
+        referer: "https://www.tiktok.com/trending?lang=en",
+        "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/83.0.4103.97 Safari/537.36",
+    },
 };
 const postTemplate = {
-    method: 'POST',
+    method: "POST",
     headers: {
-        'content-type': 'application/json',
+        "content-type": "application/json",
     },
 };
 exports.utility = {};
@@ -63,7 +63,7 @@ exports.utility.signURL = function (url) {
             throw Error(constants_1.SIGN_URL_ERROR);
         }
         // Temporarily removed verification token because it is not required for some URLs.
-        return url + '&_signature=' + body.signature + '&verifyFp=' + body.verifyFp;
+        return url + "&_signature=" + body.signature + "&verifyFp=" + body.verifyFp;
     });
 };
 function post(urlStr, body) {
@@ -76,9 +76,9 @@ function post(urlStr, body) {
         };
         merge(requestArgs, postTemplate);
         return new Promise((resolve, reject) => {
-            const req = http.request(requestArgs, res => handleResponse(res, resolve, reject));
-            req.on('error', reject);
-            req.write(JSON.stringify(body));
+            const req = http.request(requestArgs, (res) => handleResponse(res, resolve, reject));
+            req.on("error", reject);
+            req.write(body);
             req.end();
         });
     });
@@ -94,28 +94,28 @@ function getBody(urlStr) {
             requestArgs.port = url.port;
         merge(requestArgs, getTemplate);
         return new Promise((resolve, reject) => {
-            const req = https.get(requestArgs, res => handleResponse(res, resolve, reject));
-            req.on('error', reject);
+            const req = https.get(requestArgs, (res) => handleResponse(res, resolve, reject));
+            req.on("error", reject);
         });
     });
 }
 exports.getBody = getBody;
 function handleResponse(res, resolve, reject) {
     let chunks = [];
-    res.on('data', chunk => chunks.push(chunk));
-    res.on('end', () => convertResponse(chunks, res.headers['content-encoding'], resolve, reject));
+    res.on("data", (chunk) => chunks.push(chunk));
+    res.on("end", () => convertResponse(chunks, res.headers["content-encoding"], resolve, reject));
 }
 function convertResponse(chunks, encoding, resolve, reject) {
     return __awaiter(this, void 0, void 0, function* () {
         const buffer = Buffer.concat(chunks);
         let decodedBuffer;
-        if (encoding === 'gzip') {
+        if (encoding === "gzip") {
             decodedBuffer = (yield gunzip(buffer));
         }
-        else if (encoding === 'deflate') {
+        else if (encoding === "deflate") {
             decodedBuffer = (yield deflate(buffer));
         }
-        else if (encoding === 'br') {
+        else if (encoding === "br") {
             decodedBuffer = yield brotli(buffer);
         }
         else {
